@@ -34,3 +34,24 @@ def init_db():
         with app.open_resource('schema.sql', mode='r') as f:
             db.cursor().executescript(f.read())
         db.commit()
+
+@app.route('/')
+def index():
+    return "Welcome"
+
+@app.route('/todos', methods=['GET', 'POST'])
+def get_db():
+    db = get_db()
+    cursor = d.cursor()
+
+    if request.method == 'POST':
+        task = request.json('task')
+        cursor.execute('INSERT INTO todos (task, done) VALUES (?,?)', (task, False))
+        db.commit()
+
+        return "JSON", 201
+    
+    if request.method == 'GET':
+        cursor.execute('SELECT * FROM todos')
+        all_todos = [dict(row) for row in cursor.fetchall()]
+        return jsonify(all_todos)

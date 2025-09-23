@@ -22,3 +22,12 @@ def test_get_todos(client):
     assert response.is_json
     # We added 2 items in the fixture, so we expect to get them back
     assert len(response.json) == 2
+
+def test_add_todo(client):
+    new_todo = {'task': 'Learn Python'}
+    response = client.post('/todos', json=new_todo)
+    assert response.status_code == 201
+
+    get_response = client.get('/todos')
+    assert get_response.status_code == 200
+    assert len(get_response.json) == 3
